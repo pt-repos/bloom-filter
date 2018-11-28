@@ -1,7 +1,7 @@
 defmodule BloomFilter do
-  def init(expected_size, false_positive_rate) do
+  def init(expected_size, error_rate) do
     hash_fns = [:sha, :ripemd160, :sha256]
-    m = calculate_required_bits(expected_size, false_positive_rate)
+    m = calculate_required_bits(expected_size, error_rate)
     bits = List.duplicate(0, m)
     [bits: bits, length: m, hash_fns: hash_fns]
   end
@@ -31,9 +31,9 @@ defmodule BloomFilter do
     |> Enum.all?(fn x -> Enum.at(filter[:bits], x) == 1 end)
   end
 
-  defp calculate_required_bits(expected_size, false_positive_rate) do
+  defp calculate_required_bits(expected_size, error_rate) do
     n = expected_size
-    p = false_positive_rate
+    p = error_rate
     round(-n * :math.log(p) / :math.pow(:math.log(2), 2))
   end
 
