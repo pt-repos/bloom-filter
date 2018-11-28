@@ -13,17 +13,53 @@ defmodule BloomFilterTest do
     assert filter[:length] == @length
   end
 
-  test "filter contains item" do
-    filter = BloomFilter.init(@size, @rate)
-    filter = BloomFilter.put(filter, "test")
+  test "insert an item" do
+    filter =
+      BloomFilter.init(@size, @rate)
+      |> BloomFilter.put("test")
 
     assert BloomFilter.contains?(filter, "test")
   end
 
-  test "filter doesn't contain item" do
-    filter = BloomFilter.init(@size, @rate)
-    filter = BloomFilter.put(filter, "test")
+  test "insert a list" do
+    list = ["test", "test2", "test3", "test4"]
 
-    assert !BloomFilter.contains?(filter, "not in filter")
+    filter =
+      BloomFilter.init(@size, @rate)
+      |> BloomFilter.put(list)
+
+    assert BloomFilter.contains?(filter, list)
+  end
+
+  describe "contains? negative cases" do
+    test "doesn't contain item" do
+      filter =
+        BloomFilter.init(@size, @rate)
+        |> BloomFilter.put("test")
+
+      assert !BloomFilter.contains?(filter, "not in filter")
+    end
+
+    test "doesn't contain any member of list" do
+      data = ["test", "test2", "test3", "test4"]
+      check = ["csc", "scjsk", "zxczxcxz", "ajcbasnkan"]
+
+      filter = 
+        BloomFilter.init(@size, @rate)
+        |> BloomFilter.put(data)
+
+      assert !BloomFilter.contains?(filter, check)
+    end
+
+    test "doesn't contain all the members of list" do
+      data = ["test", "test2", "test3", "test4"]
+      check = ["csc", "test2", "zxczxcxz", "test4"]
+
+      filter = 
+        BloomFilter.init(@size, @rate)
+        |> BloomFilter.put(data)
+
+      assert !BloomFilter.contains?(filter, check)
+    end
   end
 end
