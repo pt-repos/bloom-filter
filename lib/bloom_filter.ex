@@ -37,9 +37,13 @@ defmodule BloomFilter do
     round(-n * :math.log(p) / :math.pow(:math.log(2), 2))
   end
 
-  def hash(item, hash_fns, length) do
+  defp hash(item, hash_fns, length) do
     Enum.map(hash_fns, fn hash_fn ->
-      :crypto.hash(hash_fn, item)
+      hash1 =
+        :erlang.phash(item, trunc(:math.pow(2, 32)))
+        |> to_string
+
+      :crypto.hash(hash_fn, hash1)
       |> :binary.decode_unsigned()
       |> rem(length)
     end)

@@ -6,6 +6,10 @@ defmodule BloomFilterTest do
   @rate 0.3
   @length 25
 
+  defmodule TestStruct do
+    defstruct a: "test", b: 1 
+  end
+
   test "initialize" do
     filter = BloomFilter.init(@size, @rate)
     assert !Enum.empty?(filter)
@@ -31,6 +35,16 @@ defmodule BloomFilterTest do
     assert BloomFilter.contains?(filter, list)
   end
 
+  test "insert a struct" do
+    struct = %TestStruct{}
+
+    filter =
+      BloomFilter.init(@size, @rate)
+      |> BloomFilter.put(struct)
+
+    assert BloomFilter.contains?(filter, struct)
+  end
+
   describe "contains? negative cases" do
     test "doesn't contain item" do
       filter =
@@ -41,10 +55,16 @@ defmodule BloomFilterTest do
     end
 
     test "doesn't contain any member of list" do
-      data = ["test", "test2", "test3", "test4"]
-      check = ["csc", "scjsk", "zxczxcxz", "ajcbasnkan"]
+      
+      data1 = %TestStruct{}
+      data2 = %TestStruct{b: 2}
+      data3 = %TestStruct{a: "data3"}
+      data4 = %TestStruct{a: "data4", b: 4}
 
-      filter = 
+      data = [data1, data2, data3, data4]
+      check = [data1, data2, %TestStruct{a: "test", b: 3}, data4]
+
+      filter =
         BloomFilter.init(@size, @rate)
         |> BloomFilter.put(data)
 
@@ -52,10 +72,10 @@ defmodule BloomFilterTest do
     end
 
     test "doesn't contain all the members of list" do
-      data = ["test", "test2", "test3", "test4"]
-      check = ["csc", "test2", "zxczxcxz", "test4"]
+      data = [1, 2, 3, 4]
+      check = [5, 6, 7, 8]
 
-      filter = 
+      filter =
         BloomFilter.init(@size, @rate)
         |> BloomFilter.put(data)
 
