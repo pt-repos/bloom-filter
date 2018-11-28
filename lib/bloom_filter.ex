@@ -1,8 +1,8 @@
 defmodule BloomFilter do
   @moduledoc """
   BloomFilter implementation for quick probabilistic searches.
-  The data structure can quickly make a probabilistic guess whether
-  an item exists in the set or not, but never gives a false negative.
+  The data structure can quickly make a guess whether an item
+  probably exists in the set or not, but never gives a false negative.
   """
 
   @doc """
@@ -40,7 +40,7 @@ defmodule BloomFilter do
   end
 
   @doc """
-  Checks whether each item in the given item probably exists in the filter.
+  Checks whether each item in the given list probably exists in the filter.
   """
   def contains?(filter, items) when is_list(items) do
     Enum.all?(items, fn item -> contains?(filter, item) end)
@@ -54,7 +54,7 @@ defmodule BloomFilter do
     |> Enum.all?(fn x -> Enum.at(filter[:bits], x) == 1 end)
   end
 
-  # Calculates the required size of bit array for the given parameters.
+  # Calculates the required size of bit array for the expected filter size and desired error rate.
   defp calculate_required_bits(expected_size, error_rate) do
     n = expected_size
     p = error_rate
