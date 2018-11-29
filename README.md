@@ -1,6 +1,9 @@
 # BloomFilter
 
 **TODO: Add description**
+Elixir implementation of Bloom Filter for quick probabilistic searches.
+The data structure can quickly make a guess whether an item probably exists in the set or not.
+Result may be a false positive but it is never a false negative. The probability of getting a false positive can be controlled by selecting sufficient size of bit array.
 
 ## Installation
 
